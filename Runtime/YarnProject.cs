@@ -5,11 +5,9 @@ using System.Linq;
 
 namespace Yarn.Unity
 {
-
     [HelpURL("https://yarnspinner.dev/docs/unity/components/yarn-programs/")]
     public class YarnProject : ScriptableObject
     {
-
         [SerializeField]
         [HideInInspector]
         public byte[] compiledYarnProgram;
@@ -50,17 +48,15 @@ namespace Yarn.Unity
         /// </summary>
         public string[] NodeNames
         {
-            get
-            {
-                return Program.Nodes.Keys.ToArray();
-            }
+            get { return Program.Nodes.Keys.ToArray(); }
         }
-        
+
         /// <summary>
         /// The cached result of reading the default values from the <see
         /// cref="Program"/>.
         /// </summary>
         private Dictionary<string, System.IConvertible> initialValues;
+
         /// <summary>
         /// The default values of all declared or inferred variables in the
         /// <see cref="Program"/>.
@@ -99,7 +95,9 @@ namespace Yarn.Unity
                         }
                         default:
                         {
-                            Debug.LogWarning($"{pair.Key} is of an invalid type: {value.ValueCase}");
+                            Debug.LogWarning(
+                                $"{pair.Key} is of an invalid type: {value.ValueCase}"
+                            );
                             break;
                         }
                     }
@@ -114,8 +112,9 @@ namespace Yarn.Unity
         // is somewhat unnecessary as people can get this out themselves if they want
         // but I think peeps will wanna use headers like a dictionary
         // so we will do the transformation for you
-        private Dictionary<string, Dictionary<string, List<string>>>nodeHeaders = new Dictionary<string, Dictionary<string, List<string>>>();
-        
+        private Dictionary<string, Dictionary<string, List<string>>> nodeHeaders =
+            new Dictionary<string, Dictionary<string, List<string>>>();
+
         /// <summary>
         /// Gets the headers for the requested node.
         /// </summary>
@@ -176,7 +175,6 @@ namespace Yarn.Unity
 
         public Localization GetLocalization(string localeCode)
         {
-
             // If localeCode is null, we use the base localization.
             if (localeCode == null)
             {
@@ -197,8 +195,16 @@ namespace Yarn.Unity
         }
 
         /// <summary>
-        /// Gets the Yarn Program stored in this project.
+        /// Returns a node with the specified name.
         /// </summary>
+        public Node GetNode(string nodeName)
+        {
+            return Program.Nodes.TryGetValue(nodeName, out Node node) ? node : null;
+        }
+
+        /// <summary>
+        /// Gets the Yarn Program stored in this project.
+        /// /// </summary>
         [System.Obsolete("Use the Program property instead, which caches its return value.")]
         public Program GetProgram()
         {
@@ -224,12 +230,13 @@ namespace Yarn.Unity
                 return cachedProgram;
             }
         }
-        private void Awake() 
+
+        private void Awake()
         {
             // We have to invalidate the cache on Awake.
-            // Note that this cannot be done through the importer 
+            // Note that this cannot be done through the importer
             // (e.g., with a setter method that sets compiledYarnProgram and invalidates cachedProgram)
-            // because the YarnProject the importer accesses is NOT the same object as the 
+            // because the YarnProject the importer accesses is NOT the same object as the
             // one currently loaded in the editor. (You can tell by comparing their HashCodes)
             // If there are other sources that can change the value of compiledYarnProgram aside from
             // the importer in runtime, maybe we can add such a method, but until then, this is sufficient.
@@ -237,7 +244,8 @@ namespace Yarn.Unity
         }
     }
 
-    public enum LocalizationType {
+    public enum LocalizationType
+    {
         YarnInternal,
         Unity,
     }
